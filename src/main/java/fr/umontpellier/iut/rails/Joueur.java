@@ -101,8 +101,11 @@ public class Joueur {
             optionsVilles.add(ville.nom());
         }
         List<Bouton> boutons = Arrays.asList(
-                new Bouton("Montpellier"),
-                new Bouton("Sète"));
+                new Bouton("Europe"),
+                new Bouton("Asie"),
+                new Bouton("Afrique"),
+                new Bouton("Amérique"));
+
 
         String choix = choisir(
                 "Choisissez votre ville préférée",

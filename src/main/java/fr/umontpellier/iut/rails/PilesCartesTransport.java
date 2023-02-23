@@ -1,11 +1,14 @@
 package fr.umontpellier.iut.rails;
 
 import fr.umontpellier.iut.rails.data.CarteTransport;
+import fr.umontpellier.iut.rails.data.TypeCarteTransport;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static fr.umontpellier.iut.rails.data.TypeCarteTransport.WAGON;
 
 public class PilesCartesTransport {
     private final List<CarteTransport> pilePioche;
@@ -24,18 +27,23 @@ public class PilesCartesTransport {
      * @return la carte retirée ou null
      */
     public CarteTransport piocher() {
-        throw new RuntimeException("Méthode pas encore implémentée !");
+        if(pilePioche.isEmpty()) {
+            return null;
+        }
+        CarteTransport cart = (pilePioche.get(pilePioche.size() - 1));
+        return cart;
     }
 
+
     public void defausser(CarteTransport carte) {
-        throw new RuntimeException("Méthode pas encore implémentée !");
+
     }
 
     /**
      * @return true si aucune carte ne peut être prise (si les deux piles sont vides)
      */
     public boolean estVide() {
-        throw new RuntimeException("Méthode pas encore implémentée !");
+        return pilePioche.isEmpty() && pileDefausse.isEmpty();
     }
 
     public List<CarteTransport> getCartes() {
