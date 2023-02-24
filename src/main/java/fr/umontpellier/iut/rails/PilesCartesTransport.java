@@ -27,16 +27,22 @@ public class PilesCartesTransport {
      * @return la carte retirée ou null
      */
     public CarteTransport piocher() {
-        if(pilePioche.isEmpty()) {
+        if(estVide()) {
             return null;
         }
+        if(pilePioche.isEmpty()) {
+            pilePioche.addAll(pileDefausse);
+            pileDefausse.removeAll(pileDefausse);
+            Collections.shuffle(pilePioche);
+        }
         CarteTransport cart = (pilePioche.get(pilePioche.size() - 1));
+        pilePioche.remove(pilePioche.size() - 1);
         return cart;
     }
 
 
     public void defausser(CarteTransport carte) {
-
+        pileDefausse.add(carte);
     }
 
     /**
