@@ -99,6 +99,7 @@ public class JeuProfTest {
         }
         // on vérifie que chaque joueur a 5 destinations
         for (Joueur j : joueurs) {
+            int x = TestUtils.getDestinations(j).size();
             assertEquals(5, TestUtils.getDestinations(j).size());
         }
     }

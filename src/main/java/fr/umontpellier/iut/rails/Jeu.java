@@ -165,35 +165,31 @@ public class Jeu implements Runnable {
                 j.setDestinations(dest.get(x));
                 pileDestinations.remove(0);
             }
-            int n = 0;
-            for (int i = 0; i < 2; i++) {
+            while(dest.size() > 3) {
                 List<Bouton> boutons = new ArrayList<>();
                 for (Destination d : dest) {
                     boutons.add(new Bouton(d.toString(), d.getNom()));
                 }
 
                 String choix = j.choisir(
-                        "Choisissez de supprimer 2 destinations maximum",
+                        "Choisissez de supprimer jusqu'a 2 destinations ou passer",
                         null,
                         boutons,
                         true);
 
                 if (choix.equals("")) {
-                    n++;
-                    log(String.format("%s n'a pas chosis de ville " + n + " fois.", j.toLog()));
+                    break;
                 }
                 Destination destinationChoisie;
                 for (Destination d : dest) {
                     if (d.getNom().equals(choix)) {
-                        destinationChoisie = d;
                         j.removeDestinations(d);
                         dest.remove(d);
-                        pileDestinations.add(pileDestinations.size()-1, d);
+                        pileDestinations.add(pileDestinations.size() - 1, d);
                         break;
                     }
                 }
             }
-            n = 0;
         }
     }
 
@@ -201,49 +197,31 @@ public class Jeu implements Runnable {
         for (Joueur j : joueurs) {
             ArrayList<String> nbPionsWagon = new ArrayList<>();
 
-            for(int i = 10; i <= 25; i++) {
+            for (int i = 10; i <= 25; i++) {
                 nbPionsWagon.add(String.valueOf(i));
             }
-
-            List<Bouton> boutons = Arrays.asList(
-                    new Bouton(nbPionsWagon.get(0)),
-                    new Bouton(nbPionsWagon.get(1)),
-                    new Bouton(nbPionsWagon.get(2)),
-                    new Bouton(nbPionsWagon.get(3)),
-                    new Bouton(nbPionsWagon.get(4)),
-                    new Bouton(nbPionsWagon.get(5)),
-                    new Bouton(nbPionsWagon.get(6)),
-                    new Bouton(nbPionsWagon.get(7)),
-                    new Bouton(nbPionsWagon.get(8)),
-                    new Bouton(nbPionsWagon.get(9)),
-                    new Bouton(nbPionsWagon.get(10)),
-                    new Bouton(nbPionsWagon.get(11)),
-                    new Bouton(nbPionsWagon.get(12)),
-                    new Bouton(nbPionsWagon.get(13)),
-                    new Bouton(nbPionsWagon.get(14)),
-                    new Bouton(nbPionsWagon.get(15)));
+            List<Bouton> boutons = new ArrayList<>();
+            for (String p : nbPionsWagon) {
+                boutons.add(new Bouton(p));
+            }
 
             String choix = j.choisir(
                     "Choisissez le nombre de pions Wagon que vous voulez",
-                    nbPionsWagon,
+                    null,
                     boutons,
                     false);
 
             int n = Integer.parseInt(choix);
             j.setNbPionsWagon(n);
-            j.setNbPionsWagonEnReserve(25-n);
-            if(n != 10) {
-                j.setNbPionsBateau(60-n);
-                j.setNbPionsBateauEnReserve(50-(60-n));
+            j.setNbPionsWagonEnReserve(25 - n);
+            if (n != 10) {
+                j.setNbPionsBateau(60 - n);
+                j.setNbPionsBateauEnReserve(50 - (60 - n));
             } else {
                 j.setNbPionsBateau(50);
                 j.setNbPionsBateauEnReserve(0);
             }
         }
-    }
-
-    public void zofoz() {
-
     }
     public void run() {
         // IMPORTANT : Le corps de cette fonction est à réécrire entièrement
@@ -251,6 +229,7 @@ public class Jeu implements Runnable {
         InitialisationCarte();
         InitialisationCarteJoueur();
         Initialisationdestination();
+        InitialisationPions();
         for (Joueur j : joueurs) {
             joueurCourant = j;
             j.jouerTour();
