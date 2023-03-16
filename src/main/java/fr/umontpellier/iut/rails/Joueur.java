@@ -129,14 +129,15 @@ public class Joueur {
             optionsVilles.add(ville.nom());
         }
         List<Bouton> boutons = Arrays.asList(
-                new Bouton("Europe"),
-                new Bouton("Asie"),
-                new Bouton("Afrique"),
-                new Bouton("Amérique"));
+                new Bouton("piocher des cartes transport"),
+                new Bouton("échanger des pions wagons ou bateau"),
+                new Bouton("prendre de nouvelles destinations"),
+                new Bouton("capturer une route"),
+                new Bouton("construire un port"));
 
 
         String choix = choisir(
-                "Choisissez votre ville préférée",
+                "Quelle action souhaitez-vous faire ?",
                 optionsVilles,
                 boutons,
                 true);
