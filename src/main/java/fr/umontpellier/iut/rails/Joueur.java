@@ -84,6 +84,10 @@ public class Joueur {
         this.nbPionsWagon = nbPionsWagon;
     }
 
+    public void removeDestinations(Destination d) {
+        destinations.remove(d);
+    }
+
     public void setDestinations(Destination d) {
         destinations.add(d);
     }

@@ -140,79 +140,65 @@ public class Jeu implements Runnable {
      */
     public void InitialisationCarte() {
         //
-        CarteTransport carteTransport = null;
-        for (int i = 0; i < 6; i++) {
-            if(i < 3) {
-                carteTransport = pilesDeCartesWagon.piocher();
-            } else {
-                carteTransport = pilesDeCartesBateau.piocher();
-            }
-            cartesTransportVisibles.add(carteTransport);
+        for (int i = 0; i < 3; i++) {
+            cartesTransportVisibles.add(piocherCarteBateau());
+            cartesTransportVisibles.add(piocherCarteWagon());
         }
+    }
+
+    public void InitialisationCarteJoueur() {
         for (Joueur j : joueurs) {
-            joueurCourant = j;
             for (int i = 0; i < 3; i++) {
                 j.getCartesTransport().add(pilesDeCartesWagon.piocher());
             }
             for (int i = 0; i < 7; i++) {
                 j.getCartesTransport().add(pilesDeCartesBateau.piocher());
             }
-            List<String> Destinations = new ArrayList<>();
-            List<Destination> dest = new ArrayList<>();
-            List<Destination> supression = new ArrayList<>();
-            for (int x = 0; x < 5; x++) {
-                dest.add(pileDestinations.get(pileDestinations.size() - 1));
-                Destinations.add(pileDestinations.get(pileDestinations.size() - 1).toString());
-                pileDestinations.remove(pileDestinations.size() - 1);
-            }
-            for (int i = 0; i < 2; i++) {
-                List<Bouton> boutons = Arrays.asList(
-                        new Bouton(Destinations.get(0) + " - " + dest.get(0).getNom()),
-                        new Bouton(Destinations.get(1) + " - " + dest.get(1).getNom()),
-                        new Bouton(Destinations.get(2) + " - " + dest.get(2).getNom()),
-                        new Bouton(Destinations.get(3) + " - " + dest.get(3).getNom()),
-                        new Bouton(Destinations.get(4) + " - " + dest.get(4).getNom()));
+        }
+    }
 
+    public void Initialisationdestination() {
+        for (Joueur j : joueurs) {
+            List<Destination> dest = new ArrayList<>();
+            for (int x = 0; x < 5; x++) {
+                dest.add(pileDestinations.get(0));
+                j.setDestinations(dest.get(x));
+                pileDestinations.remove(0);
+            }
+            int n = 0;
+            for (int i = 0; i < 2; i++) {
+                List<Bouton> boutons = new ArrayList<>();
+                for (Destination d : dest) {
+                    boutons.add(new Bouton(d.toString(), d.getNom()));
+                }
 
                 String choix = j.choisir(
                         "Choisissez de supprimer 2 destinations maximum",
-                        Destinations,
+                        null,
                         boutons,
                         true);
 
-                if (choix.equals(Destinations.get(0))) {
-                    supression.add(dest.get(0));
-                }
-                if (choix.equals(Destinations.get(1))) {
-                    supression.add(dest.get(1));
-                }
-                if (choix.equals(Destinations.get(2))) {
-                    supression.add(dest.get(2));
-                }
-                if (choix.equals(Destinations.get(3))) {
-                    supression.add(dest.get(3));
-                }
-                if (choix.equals(Destinations.get(4))) {
-                    supression.add(dest.get(4));
-                }
                 if (choix.equals("")) {
-                    log(String.format("%s n'a rien supprimé ", j.toLog()));
+                    n++;
+                    log(String.format("%s n'a pas chosis de ville " + n + " fois.", j.toLog()));
                 }
-            }
-            for (int i = 0; i < dest.size(); i++) {
-                if (supression.size() == 1) {
-                    if (dest.get(i) != supression.get(0))
-                        j.setDestinations(dest.get(i));
-                } else if (supression.size() == 2) {
-                    if (dest.get(i) != supression.get(0) && dest.get(i) != supression.get(1)) {
-                        j.setDestinations(dest.get(i));
+                Destination destinationChoisie;
+                for (Destination d : dest) {
+                    if (d.getNom().equals(choix)) {
+                        destinationChoisie = d;
+                        j.removeDestinations(d);
+                        dest.remove(d);
+                        pileDestinations.add(pileDestinations.size()-1, d);
+                        break;
                     }
                 }
             }
-            for (int i = 0; i < supression.size(); i++) {
-                pileDestinations.add(0, supression.get(i));
-            }
+            n = 0;
+        }
+    }
 
+    public void InitialisationPions() {
+        for (Joueur j : joueurs) {
             ArrayList<String> nbPionsWagon = new ArrayList<>();
 
             for(int i = 10; i <= 25; i++) {
@@ -255,10 +241,16 @@ public class Jeu implements Runnable {
             }
         }
     }
+
+    public void zofoz() {
+
+    }
     public void run() {
         // IMPORTANT : Le corps de cette fonction est à réécrire entièrement
         // Un exemple très simple est donné pour illustrer l'utilisation de certaines méthodes
         InitialisationCarte();
+        InitialisationCarteJoueur();
+        Initialisationdestination();
         for (Joueur j : joueurs) {
             joueurCourant = j;
             j.jouerTour();
