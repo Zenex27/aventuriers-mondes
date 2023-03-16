@@ -36,6 +36,10 @@ public class Destination {
      */
     private static int compteur = 1;
 
+    public String getNom() {
+        return nom;
+    }
+
     public Destination(List<String> villes, int valeurSimple, int valeurMax, int penalite) {
         this.villes = villes;
         this.valeurSimple = valeurSimple;

@@ -80,6 +80,30 @@ public class Joueur {
         this.score = 0;
     }
 
+    public void setNbPionsWagon(int nbPionsWagon) {
+        this.nbPionsWagon = nbPionsWagon;
+    }
+
+    public void setDestinations(Destination d) {
+        destinations.add(d);
+    }
+
+    public List<CarteTransport> getCartesTransport() {
+        return cartesTransport;
+    }
+
+    public void setNbPionsWagonEnReserve(int nbPionsWagonEnReserve) {
+        this.nbPionsWagonEnReserve = nbPionsWagonEnReserve;
+    }
+
+    public void setNbPionsBateau(int nbPionsBateau) {
+        this.nbPionsBateau = nbPionsBateau;
+    }
+
+    public void setNbPionsBateauEnReserve(int nbPionsBateauEnReserve) {
+        this.nbPionsBateauEnReserve = nbPionsBateauEnReserve;
+    }
+
     public String getNom() {
         return nom;
     }

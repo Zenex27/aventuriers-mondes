@@ -5,6 +5,7 @@ import fr.umontpellier.iut.gui.GameServer;
 import fr.umontpellier.iut.rails.data.*;
 
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -131,15 +132,133 @@ public class Jeu implements Runnable {
 
     /**
      * Exécute la partie
-     *
+     * <p>
      * C'est cette méthode qui est appelée pour démarrer la partie. Elle doit intialiser le jeu
      * (retourner les cartes transport visibles, puis demander à chaque joueur de choisir ses destinations initiales
      * et le nombre de pions wagon qu'il souhaite prendre) puis exécuter les tours des joueurs en appelant la
      * méthode Joueur.jouerTour() jusqu'à ce que la condition de fin de partie soit réalisée.
      */
+    public void InitialisationCarte() {
+        //
+        CarteTransport carteTransport = null;
+        for (int i = 0; i < 6; i++) {
+            if(i < 3) {
+                carteTransport = pilesDeCartesWagon.piocher();
+            } else {
+                carteTransport = pilesDeCartesBateau.piocher();
+            }
+            cartesTransportVisibles.add(carteTransport);
+        }
+        for (Joueur j : joueurs) {
+            joueurCourant = j;
+            for (int i = 0; i < 3; i++) {
+                j.getCartesTransport().add(pilesDeCartesWagon.piocher());
+            }
+            for (int i = 0; i < 7; i++) {
+                j.getCartesTransport().add(pilesDeCartesBateau.piocher());
+            }
+            List<String> Destinations = new ArrayList<>();
+            List<Destination> dest = new ArrayList<>();
+            List<Destination> supression = new ArrayList<>();
+            for (int x = 0; x < 5; x++) {
+                dest.add(pileDestinations.get(pileDestinations.size() - 1));
+                Destinations.add(pileDestinations.get(pileDestinations.size() - 1).toString());
+                pileDestinations.remove(pileDestinations.size() - 1);
+            }
+            for (int i = 0; i < 2; i++) {
+                List<Bouton> boutons = Arrays.asList(
+                        new Bouton(Destinations.get(0) + " - " + dest.get(0).getNom()),
+                        new Bouton(Destinations.get(1) + " - " + dest.get(1).getNom()),
+                        new Bouton(Destinations.get(2) + " - " + dest.get(2).getNom()),
+                        new Bouton(Destinations.get(3) + " - " + dest.get(3).getNom()),
+                        new Bouton(Destinations.get(4) + " - " + dest.get(4).getNom()));
+
+
+                String choix = j.choisir(
+                        "Choisissez de supprimer 2 destinations maximum",
+                        Destinations,
+                        boutons,
+                        true);
+
+                if (choix.equals(Destinations.get(0))) {
+                    supression.add(dest.get(0));
+                }
+                if (choix.equals(Destinations.get(1))) {
+                    supression.add(dest.get(1));
+                }
+                if (choix.equals(Destinations.get(2))) {
+                    supression.add(dest.get(2));
+                }
+                if (choix.equals(Destinations.get(3))) {
+                    supression.add(dest.get(3));
+                }
+                if (choix.equals(Destinations.get(4))) {
+                    supression.add(dest.get(4));
+                }
+                if (choix.equals("")) {
+                    log(String.format("%s n'a rien supprimé ", j.toLog()));
+                }
+            }
+            for (int i = 0; i < dest.size(); i++) {
+                if (supression.size() == 1) {
+                    if (dest.get(i) != supression.get(0))
+                        j.setDestinations(dest.get(i));
+                } else if (supression.size() == 2) {
+                    if (dest.get(i) != supression.get(0) && dest.get(i) != supression.get(1)) {
+                        j.setDestinations(dest.get(i));
+                    }
+                }
+            }
+            for (int i = 0; i < supression.size(); i++) {
+                pileDestinations.add(0, supression.get(i));
+            }
+
+            ArrayList<String> nbPionsWagon = new ArrayList<>();
+
+            for(int i = 10; i <= 25; i++) {
+                nbPionsWagon.add(String.valueOf(i));
+            }
+
+            List<Bouton> boutons = Arrays.asList(
+                    new Bouton(nbPionsWagon.get(0)),
+                    new Bouton(nbPionsWagon.get(1)),
+                    new Bouton(nbPionsWagon.get(2)),
+                    new Bouton(nbPionsWagon.get(3)),
+                    new Bouton(nbPionsWagon.get(4)),
+                    new Bouton(nbPionsWagon.get(5)),
+                    new Bouton(nbPionsWagon.get(6)),
+                    new Bouton(nbPionsWagon.get(7)),
+                    new Bouton(nbPionsWagon.get(8)),
+                    new Bouton(nbPionsWagon.get(9)),
+                    new Bouton(nbPionsWagon.get(10)),
+                    new Bouton(nbPionsWagon.get(11)),
+                    new Bouton(nbPionsWagon.get(12)),
+                    new Bouton(nbPionsWagon.get(13)),
+                    new Bouton(nbPionsWagon.get(14)),
+                    new Bouton(nbPionsWagon.get(15)));
+
+            String choix = j.choisir(
+                    "Choisissez le nombre de pions Wagon que vous voulez",
+                    nbPionsWagon,
+                    boutons,
+                    false);
+
+            int n = Integer.parseInt(choix);
+            j.setNbPionsWagon(n);
+            j.setNbPionsWagonEnReserve(25-n);
+            if(n != 10) {
+                j.setNbPionsBateau(60-n);
+                j.setNbPionsBateauEnReserve(50-(60-n));
+            } else {
+                j.setNbPionsBateau(50);
+                j.setNbPionsBateauEnReserve(0);
+            }
+        }
+    }
     public void run() {
         // IMPORTANT : Le corps de cette fonction est à réécrire entièrement
         // Un exemple très simple est donné pour illustrer l'utilisation de certaines méthodes
+        InitialisationCarte();
         for (Joueur j : joueurs) {
             joueurCourant = j;
             j.jouerTour();
