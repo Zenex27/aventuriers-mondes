@@ -80,10 +80,6 @@ public class Joueur {
         this.score = 0;
     }
 
-    public void setNbPionsWagon(int nbPionsWagon) {
-        this.nbPionsWagon = nbPionsWagon;
-    }
-
     public void removeDestinations(Destination d) {
         destinations.remove(d);
     }
@@ -94,6 +90,10 @@ public class Joueur {
 
     public List<CarteTransport> getCartesTransport() {
         return cartesTransport;
+    }
+
+    public void setNbPionsWagon(int nbPionsWagon) {
+        this.nbPionsWagon = nbPionsWagon;
     }
 
     public void setNbPionsWagonEnReserve(int nbPionsWagonEnReserve) {

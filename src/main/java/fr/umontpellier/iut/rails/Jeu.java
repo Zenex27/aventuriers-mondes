@@ -129,15 +129,6 @@ public class Jeu implements Runnable {
     public List<CarteTransport> getCartesTransportVisibles() {
         return new ArrayList<>(cartesTransportVisibles);
     }
-
-    /**
-     * Exécute la partie
-     * <p>
-     * C'est cette méthode qui est appelée pour démarrer la partie. Elle doit intialiser le jeu
-     * (retourner les cartes transport visibles, puis demander à chaque joueur de choisir ses destinations initiales
-     * et le nombre de pions wagon qu'il souhaite prendre) puis exécuter les tours des joueurs en appelant la
-     * méthode Joueur.jouerTour() jusqu'à ce que la condition de fin de partie soit réalisée.
-     */
     public void InitialisationCarte() {
         //
         for (int i = 0; i < 3; i++) {
@@ -147,22 +138,19 @@ public class Jeu implements Runnable {
     }
 
     public void InitialisationCarteJoueur() {
-        for (Joueur j : joueurs) {
             for (int i = 0; i < 3; i++) {
-                j.getCartesTransport().add(pilesDeCartesWagon.piocher());
+                joueurCourant.getCartesTransport().add(pilesDeCartesWagon.piocher());
             }
             for (int i = 0; i < 7; i++) {
-                j.getCartesTransport().add(pilesDeCartesBateau.piocher());
+                joueurCourant.getCartesTransport().add(pilesDeCartesBateau.piocher());
             }
-        }
     }
 
     public void Initialisationdestination() {
-        for (Joueur j : joueurs) {
             List<Destination> dest = new ArrayList<>();
             for (int x = 0; x < 5; x++) {
                 dest.add(pileDestinations.get(0));
-                j.setDestinations(dest.get(x));
+                joueurCourant.setDestinations(dest.get(x));
                 pileDestinations.remove(0);
             }
             while(dest.size() > 3) {
@@ -171,7 +159,7 @@ public class Jeu implements Runnable {
                     boutons.add(new Bouton(d.toString(), d.getNom()));
                 }
 
-                String choix = j.choisir(
+                String choix = joueurCourant.choisir(
                         "Choisissez de supprimer jusqu'a 2 destinations ou passer",
                         null,
                         boutons,
@@ -180,10 +168,9 @@ public class Jeu implements Runnable {
                 if (choix.equals("")) {
                     break;
                 }
-                Destination destinationChoisie;
                 for (Destination d : dest) {
                     if (d.getNom().equals(choix)) {
-                        j.removeDestinations(d);
+                        joueurCourant.removeDestinations(d);
                         dest.remove(d);
                         pileDestinations.add(pileDestinations.size() - 1, d);
                         break;
@@ -191,48 +178,54 @@ public class Jeu implements Runnable {
                 }
             }
         }
-    }
 
     public void InitialisationPions() {
-        for (Joueur j : joueurs) {
-            ArrayList<String> nbPionsWagon = new ArrayList<>();
+        ArrayList<String> nbPionsWagon = new ArrayList<>();
 
-            for (int i = 10; i <= 25; i++) {
-                nbPionsWagon.add(String.valueOf(i));
-            }
-            List<Bouton> boutons = new ArrayList<>();
-            for (String p : nbPionsWagon) {
-                boutons.add(new Bouton(p));
-            }
-
-            String choix = j.choisir(
+        for (int i = 10; i <= 25; i++) {
+            nbPionsWagon.add(String.valueOf(i));
+        }
+        List<Bouton> boutons = new ArrayList<>();
+        for (String p : nbPionsWagon) {
+            boutons.add(new Bouton(p));
+        }
+            String choix = joueurCourant.choisir(
                     "Choisissez le nombre de pions Wagon que vous voulez",
                     null,
                     boutons,
                     false);
 
-            int n = Integer.parseInt(choix);
-            j.setNbPionsWagon(n);
-            j.setNbPionsWagonEnReserve(25 - n);
-            if (n != 10) {
-                j.setNbPionsBateau(60 - n);
-                j.setNbPionsBateauEnReserve(50 - (60 - n));
-            } else {
-                j.setNbPionsBateau(50);
-                j.setNbPionsBateauEnReserve(0);
+            log(String.format("%s a choisi de prendre " + choix + " pions", joueurCourant.toLog()));
+
+            for (String p : nbPionsWagon) {
+                if (p.equals(choix)) {
+                    int n = Integer.parseInt(choix);
+                    joueurCourant.setNbPionsWagon(n);
+                    joueurCourant.setNbPionsWagonEnReserve(25 - n);
+                    joueurCourant.setNbPionsBateau(60 - n);
+                    joueurCourant.setNbPionsBateauEnReserve(50 - (60 - n));
+                    break;
+                }
             }
         }
-    }
+
+    /**
+     * Exécute la partie
+     * <p>
+     * C'est cette méthode qui est appelée pour démarrer la partie. Elle doit intialiser le jeu
+     * (retourner les cartes transport visibles, puis demander à chaque joueur de choisir ses destinations initiales
+     * et le nombre de pions wagon qu'il souhaite prendre) puis exécuter les tours des joueurs en appelant la
+     * méthode Joueur.jouerTour() jusqu'à ce que la condition de fin de partie soit réalisée.
+     */
     public void run() {
         // IMPORTANT : Le corps de cette fonction est à réécrire entièrement
         // Un exemple très simple est donné pour illustrer l'utilisation de certaines méthodes
         InitialisationCarte();
-        InitialisationCarteJoueur();
-        Initialisationdestination();
-        InitialisationPions();
         for (Joueur j : joueurs) {
             joueurCourant = j;
-            j.jouerTour();
+            InitialisationCarteJoueur();
+            Initialisationdestination();
+            InitialisationPions();
         }
         // Fin de la partie
         prompt("Fin de la partie.", new ArrayList<>(), true);

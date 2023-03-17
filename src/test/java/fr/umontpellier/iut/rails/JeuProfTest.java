@@ -104,7 +104,7 @@ public class JeuProfTest {
         }
     }
 
-    //@Test
+    @Test
     void testDestinationsInitialesJoueursDefaussent() {
         List<String> instructions = new ArrayList<>();
         for (Joueur j : joueurs) {
@@ -126,7 +126,7 @@ public class JeuProfTest {
         }
     }
 
-    //@Test
+    @Test
     void testPionsWagonEtBateau() {
         jeu.setInput(
                 "", // j1 garde toutes ses destinations
