@@ -166,10 +166,12 @@ public class Jeu implements Runnable {
                         true);
 
                 if (choix.equals("")) {
+                    log(String.format("%s a choisi de passer", joueurCourant.toLog()));
                     break;
                 }
                 for (Destination d : dest) {
                     if (d.getNom().equals(choix)) {
+                        log(String.format("%s a choisi de supprimer " + d, joueurCourant.toLog()));
                         joueurCourant.removeDestinations(d);
                         dest.remove(d);
                         pileDestinations.add(pileDestinations.size() - 1, d);
@@ -195,7 +197,7 @@ public class Jeu implements Runnable {
                     boutons,
                     false);
 
-            log(String.format("%s a choisi de prendre " + choix + " pions", joueurCourant.toLog()));
+            log(String.format("%s a choisi de prendre " + choix + " pions wagons", joueurCourant.toLog()));
 
             for (String p : nbPionsWagon) {
                 if (p.equals(choix)) {
@@ -204,7 +206,6 @@ public class Jeu implements Runnable {
                     joueurCourant.setNbPionsWagonEnReserve(25 - n);
                     joueurCourant.setNbPionsBateau(60 - n);
                     joueurCourant.setNbPionsBateauEnReserve(50 - (60 - n));
-                    break;
                 }
             }
         }
