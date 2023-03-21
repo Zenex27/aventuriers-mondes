@@ -133,6 +133,7 @@ public class Joueur {
     }
 
     public CarteTransport piocherCarteTransportDansCarteVisible() {
+        CarteTransport cart = null;
         List<Bouton> boutons = new ArrayList<>();
         for (CarteTransport carte : jeu.getCartesTransportVisibles()) {
             boutons.add(new Bouton(carte.toString()));
@@ -146,11 +147,13 @@ public class Joueur {
 
         for(CarteTransport carte : jeu.getCartesTransportVisibles()) {
             if(choix.equals(carte)) {
+                cart = carte;
                 cartesTransport.add(carte);
                 piocherCarteTransportDansPile();
                 return carte;
             }
         }
+        return cart;
     }
 
 
@@ -271,21 +274,18 @@ public class Joueur {
         if (jeu.getPileDestinations().size() < 4) {
             for (int i = 0; i < jeu.getPileDestinations().size(); i++) {
                 dest.add(jeu.getPileDestinations().remove(0));
+                destinations.add(dest.get(i));
             }
-            boolean peutpasser = false;
-            while (dest.size() > 0) {
-                if (dest.size() != 4) {
-                    peutpasser = true;
-                }
+            while (dest.size() > 1) {
                 List<Bouton> boutons = new ArrayList<>();
                 for (Destination d : dest) {
                     boutons.add(new Bouton(d.toString(), d.getNom()));
                 }
                 String choix = choisir(
-                        "Prenez au moins 1 destinations",
+                        "Vous pouvez sois supprimer, sois en garder au moins 1",
                         null,
                         boutons,
-                        peutpasser);
+                        true);
 
                 if (choix.equals("")) {
                     log(String.format("%s a choisi de passer", toLog()));
@@ -294,9 +294,9 @@ public class Joueur {
                 for (Destination d : dest) {
                     if (d.getNom().equals(choix)) {
                         log(String.format("%s a choisi de prendre " + d, toLog()));
-                        destinations.add(d);
+                        destinations.remove(d);
                         dest.remove(d);
-                        jeu.getPileDestinations().add(jeu.getPileDestinations().size() - 1, d);
+                        jeu.getPileDestinations().add(jeu.getPileDestinations().size(), d);
                         break;
                     }
                 }
@@ -304,21 +304,18 @@ public class Joueur {
         } else {
             for (int i = 0; i < 4; i++) {
                 dest.add(jeu.getPileDestinations().remove(0));
+                destinations.add(dest.get(i));
             }
-            boolean peutpasser = false;
-            while (dest.size() > 0) {
-                if (dest.size() != 4) {
-                    peutpasser = true;
-                }
+            while (dest.size() > 1) {
                 List<Bouton> boutons = new ArrayList<>();
                 for (Destination d : dest) {
                     boutons.add(new Bouton(d.toString(), d.getNom()));
                 }
                 String choix = choisir(
-                        "Prenez au moins 1 destinations",
+                        "Vous pouvez supprimer jusqu'a 3 destination maximum.",
                         null,
                         boutons,
-                        peutpasser);
+                        true);
 
                 if (choix.equals("")) {
                     log(String.format("%s a choisi de passer", toLog()));
@@ -326,10 +323,10 @@ public class Joueur {
                 }
                 for (Destination d : dest) {
                     if (d.getNom().equals(choix)) {
-                        log(String.format("%s a choisi de prendre " + d, toLog()));
-                        destinations.add(d);
+                        log(String.format("%s a choisi de supprimer " + d, toLog()));
+                        destinations.remove(d);
                         dest.remove(d);
-                        jeu.getPileDestinations().add(jeu.getPileDestinations().size() - 1, d);
+                        jeu.getPileDestinations().add(jeu.getPileDestinations().size(), d);
                         break;
                     }
                 }

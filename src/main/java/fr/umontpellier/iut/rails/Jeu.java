@@ -245,7 +245,6 @@ public class Jeu implements Runnable {
             InitialisationPions();
         }
         for (Joueur j : joueurs) {
-            joueurCourant = j;
             j.jouerTour();
         }
         // Fin de la partie
