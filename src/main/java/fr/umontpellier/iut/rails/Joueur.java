@@ -2,7 +2,9 @@ package fr.umontpellier.iut.rails;
 
 import fr.umontpellier.iut.rails.data.*;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Joueur {
     public enum CouleurJouer {
@@ -59,7 +61,7 @@ public class Joueur {
      */
     private final List<CarteTransport> cartesTransportPosees;
     /**
-     * Score courant du joueur (somme des valeurs des routes capturées, et points
+     * Score courant du joueur (somme des valeurs des routes capturées et points
      * perdus lors des échanges de pions)
      */
     private int score;
@@ -112,6 +114,235 @@ public class Joueur {
         return nom;
     }
 
+    public CarteTransport piocherCarteTransportDansPile() {
+        List<Bouton> boutons = Arrays.asList(
+                new Bouton("Piocher dans la pile Bateaux"),
+                new Bouton("Piocher dans la pile Wagons"));
+
+        String choix = choisir(
+                "Dans quel pioche voulez vous tirer la carte ?",
+                null,
+                boutons,
+                false);
+
+        if(choix.equals(boutons.get(0))) {
+            return jeu.piocherCarteBateau();
+        } else {
+            return jeu.piocherCarteWagon();
+        }
+    }
+
+    public CarteTransport piocherCarteTransportDansCarteVisible() {
+        List<Bouton> boutons = new ArrayList<>();
+        for (CarteTransport carte : jeu.getCartesTransportVisibles()) {
+            boutons.add(new Bouton(carte.toString()));
+        }
+
+        String choix = choisir(
+                "Quel carte voulez vous piocher",
+                null,
+                boutons,
+                false);
+
+        for(CarteTransport carte : jeu.getCartesTransportVisibles()) {
+            if(choix.equals(carte)) {
+                cartesTransport.add(carte);
+                piocherCarteTransportDansPile();
+                return carte;
+            }
+        }
+    }
+
+
+    public void PiocherCarteTransport() {
+        List<Bouton> boutons = Arrays.asList(
+                new Bouton("piocher dans les cartes visibles"),
+                new Bouton("Piocher dans la pile Wagons"),
+                new Bouton("Piocher dans la pile Bateaux"));
+
+        String choix = choisir(
+                "Ou voulez-vous piocher",
+                null,
+                boutons,
+                false);
+
+        if(choix.equals(boutons.get(0))) {
+            List<Bouton> bouton = new ArrayList<>();
+            for (CarteTransport carte : jeu.getCartesTransportVisibles()) {
+                bouton.add(new Bouton(carte.toString()));
+            }
+            choix = choisir(
+                    "Quel carte voulez vous piocher",
+                    null,
+                    boutons,
+                    false);
+
+        }
+        if(choix.equals(boutons.get(1))) {
+
+        } else {
+
+        }
+    }
+
+    public void EchangerPionsWagonsBateau() {
+        /*List<Bouton> boutons = new ArrayList<>();
+        for(int i = 0; i < 2; i ++) {
+            boutons.add(new Bouton("Prendre des pions Wagons contre des Bateaux",String.valueOf(i)));
+        }
+
+        String choix = choisir(
+                "Quel pions voulez vous échanger",
+                null,
+                boutons,
+                false);
+
+        //log(String.format("%s n'aime aucune ville " + choix, toLog()));
+        if(choix.equals(0)) {
+            ArrayList<String> nbPionsWagonsEchanger = new ArrayList<>();
+            if (nbPionsWagonEnReserve < nbPionsBateau) {
+                for (int i = 1; i <= nbPionsWagonEnReserve; i++) {
+                    nbPionsWagonsEchanger.add(String.valueOf(i));
+                }
+            } else {
+                for (int i = 1; i <= nbPionsBateau; i++) {
+                    nbPionsWagonsEchanger.add(String.valueOf(i));
+                }
+            }
+            List<Bouton> bouton = new ArrayList<>();
+            for (String p : nbPionsWagonsEchanger) {
+                boutons.add(new Bouton(p));
+            }
+
+            String choixPions = choisir(
+                    "Combien de pions voulez vous échanger ?",
+                    null,
+                    bouton,
+                    false);
+
+            for (String p : nbPionsWagonsEchanger) {
+                if (p.equals(choixPions)) {
+                    int n = Integer.parseInt(choixPions);
+                    nbPionsWagon += n;
+                    nbPionsBateau -= n;
+                    nbPionsWagonEnReserve -= n;
+                    nbPionsBateauEnReserve += n;
+                }
+            }
+        } else {
+            ArrayList<String> nbPionsBateauxEchanger = new ArrayList<>();
+            if (nbPionsBateauEnReserve < nbPionsWagon) {
+                for (int i = 1; i <= nbPionsWagonEnReserve; i++) {
+                    nbPionsBateauxEchanger.add(String.valueOf(i));
+                }
+            } else {
+                for (int i = 1; i <= nbPionsWagon; i++) {
+                    nbPionsBateauxEchanger.add(String.valueOf(i));
+                }
+            }
+            List<Bouton> bouton = new ArrayList<>();
+            for (String p : nbPionsBateauxEchanger) {
+                boutons.add(new Bouton(p));
+            }
+
+            String choixPionsBateau = choisir(
+                    "Combien de pions voulez vous échanger ?",
+                    null,
+                    bouton,
+                    false);
+
+            for (String p : nbPionsBateauxEchanger) {
+                if (p.equals(choixPionsBateau)) {
+                    int n = Integer.parseInt(choixPionsBateau);
+                    nbPionsWagon -= n;
+                    nbPionsBateau += n;
+                    nbPionsWagonEnReserve += n;
+                    nbPionsBateauEnReserve -= n;
+                }
+            }
+        }*/
+    }
+
+    public void PrendreNvDestinations() {
+        List<Destination> dest = new ArrayList<>();
+        if (jeu.getPileDestinations().isEmpty()) {
+            log(String.format("%s désolé, la pioche destination est vide", toLog()));
+        }
+        if (jeu.getPileDestinations().size() < 4) {
+            for (int i = 0; i < jeu.getPileDestinations().size(); i++) {
+                dest.add(jeu.getPileDestinations().remove(0));
+            }
+            boolean peutpasser = false;
+            while (dest.size() > 0) {
+                if (dest.size() != 4) {
+                    peutpasser = true;
+                }
+                List<Bouton> boutons = new ArrayList<>();
+                for (Destination d : dest) {
+                    boutons.add(new Bouton(d.toString(), d.getNom()));
+                }
+                String choix = choisir(
+                        "Prenez au moins 1 destinations",
+                        null,
+                        boutons,
+                        peutpasser);
+
+                if (choix.equals("")) {
+                    log(String.format("%s a choisi de passer", toLog()));
+                    break;
+                }
+                for (Destination d : dest) {
+                    if (d.getNom().equals(choix)) {
+                        log(String.format("%s a choisi de prendre " + d, toLog()));
+                        destinations.add(d);
+                        dest.remove(d);
+                        jeu.getPileDestinations().add(jeu.getPileDestinations().size() - 1, d);
+                        break;
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < 4; i++) {
+                dest.add(jeu.getPileDestinations().remove(0));
+            }
+            boolean peutpasser = false;
+            while (dest.size() > 0) {
+                if (dest.size() != 4) {
+                    peutpasser = true;
+                }
+                List<Bouton> boutons = new ArrayList<>();
+                for (Destination d : dest) {
+                    boutons.add(new Bouton(d.toString(), d.getNom()));
+                }
+                String choix = choisir(
+                        "Prenez au moins 1 destinations",
+                        null,
+                        boutons,
+                        peutpasser);
+
+                if (choix.equals("")) {
+                    log(String.format("%s a choisi de passer", toLog()));
+                    break;
+                }
+                for (Destination d : dest) {
+                    if (d.getNom().equals(choix)) {
+                        log(String.format("%s a choisi de prendre " + d, toLog()));
+                        destinations.add(d);
+                        dest.remove(d);
+                        jeu.getPileDestinations().add(jeu.getPileDestinations().size() - 1, d);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public void CapturerRoute() {
+    }
+
+    public void ConstruirePort() {
+    }
+
     /**
      * Cette méthode est appelée à tour de rôle pour chacun des joueurs de la partie.
      * Elle doit réaliser un tour de jeu, pendant lequel le joueur a le choix entre 5 actions possibles :
@@ -119,26 +350,20 @@ public class Joueur {
      *  - échanger des pions wagons ou bateau
      *  - prendre de nouvelles destinations
      *  - capturer une route
-     *  - construire un port
+     *  - construire un port.
      */
     void jouerTour() {
-        // IMPORTANT : Le corps de cette fonction est à réécrire entièrement
-        // Un exemple très simple est donné pour illustrer l'utilisation de certaines méthodes
-        List<String> optionsVilles = new ArrayList<>();
-        for (Ville ville : jeu.getPortsLibres()) {
-            optionsVilles.add(ville.nom());
-        }
         List<Bouton> boutons = Arrays.asList(
                 new Bouton("piocher des cartes transport"),
                 new Bouton("échanger des pions wagons ou bateau"),
-                new Bouton("prendre de nouvelles destinations"),
+                new Bouton("DESTINATION"),
                 new Bouton("capturer une route"),
                 new Bouton("construire un port"));
 
 
         String choix = choisir(
                 "Quelle action souhaitez-vous faire ?",
-                optionsVilles,
+                null,
                 boutons,
                 true);
 
@@ -146,6 +371,9 @@ public class Joueur {
             log(String.format("%s n'aime aucune ville", toLog()));
         } else {
             log(String.format("%s a choisi %s", toLog(), choix));
+        }
+        if(choix.equals("DESTINATION")) {
+            PrendreNvDestinations();
         }
     }
 

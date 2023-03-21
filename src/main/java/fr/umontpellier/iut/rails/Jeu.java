@@ -114,6 +114,10 @@ public class Jeu implements Runnable {
         this.joueurCourant = joueurs.get(0);
     }
 
+    public List<Destination> getPileDestinations() {
+        return pileDestinations;
+    }
+
     public List<Joueur> getJoueurs() {
         return joueurs;
     }
@@ -130,11 +134,24 @@ public class Jeu implements Runnable {
         return new ArrayList<>(cartesTransportVisibles);
     }
     public void InitialisationCarte() {
-        //
-        for (int i = 0; i < 3; i++) {
-            cartesTransportVisibles.add(piocherCarteBateau());
-            cartesTransportVisibles.add(piocherCarteWagon());
-        }
+        int n = 0;
+        do {
+            for (int i = 0; i < 3; i++) {
+                cartesTransportVisibles.add(piocherCarteBateau());
+                cartesTransportVisibles.add(piocherCarteWagon());
+            }
+            for (int i = 0; i < 6; i++) {
+                if (cartesTransportVisibles.get(i).getType() == TypeCarteTransport.JOKER) {
+                    n++;
+                }
+            }
+            if (n >= 3) {
+                for (int i = 0; i < 3; i++) {
+                    pilesDeCartesBateau.defausser(cartesTransportVisibles.remove(i));
+                    pilesDeCartesWagon.defausser(cartesTransportVisibles.remove(i));
+                }
+            }
+        } while (n >= 3);
     }
 
     public void InitialisationCarteJoueur() {
@@ -158,7 +175,6 @@ public class Jeu implements Runnable {
                 for (Destination d : dest) {
                     boutons.add(new Bouton(d.toString(), d.getNom()));
                 }
-
                 String choix = joueurCourant.choisir(
                         "Choisissez de supprimer jusqu'a 2 destinations ou passer",
                         null,
@@ -227,6 +243,10 @@ public class Jeu implements Runnable {
             InitialisationCarteJoueur();
             Initialisationdestination();
             InitialisationPions();
+        }
+        for (Joueur j : joueurs) {
+            joueurCourant = j;
+            j.jouerTour();
         }
         // Fin de la partie
         prompt("Fin de la partie.", new ArrayList<>(), true);
