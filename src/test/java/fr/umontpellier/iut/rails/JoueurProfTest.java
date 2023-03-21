@@ -165,7 +165,7 @@ public class JoueurProfTest {
         assertEquals(destAB, pileDestinations.get(nbDest - 1)); //
     }
 
-    /*@Test
+    @Test
     void testPrendrePionsWagon() {
         jeu.setInput(
                 "PIONS WAGON", // prendre des pions wagon
@@ -366,7 +366,7 @@ public class JoueurProfTest {
         assertTrue(cartesTransportVisibles.contains(cBateau0));
     }
 
-    @Test
+    /*@Test
     void testCaptureRouteTerrestre() {
         cartesJoueur1.clear();
         CarteTransport c1 = new CarteTransport(TypeCarteTransport.WAGON, Couleur.ROUGE, false, false); // C141

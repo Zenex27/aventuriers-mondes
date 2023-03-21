@@ -164,6 +164,7 @@ public class Joueur {
                 new Bouton("Piocher dans la pile Bateaux"));
 
         String choix = choisir(
+
                 "Ou voulez-vous piocher",
                 null,
                 boutons,
@@ -188,10 +189,16 @@ public class Joueur {
         }
     }
 
-    public void EchangerPionsWagonsBateau() {
-        /*List<Bouton> boutons = new ArrayList<>();
-        for(int i = 0; i < 2; i ++) {
-            boutons.add(new Bouton("Prendre des pions Wagons contre des Bateaux",String.valueOf(i)));
+    public void EchangerPionsWagons() {
+        List<Bouton> boutons = new ArrayList<>();
+        int n;
+        if(nbPionsWagonEnReserve > nbPionsBateau) {
+            n = nbPionsBateau;
+        } else {
+            n = nbPionsWagonEnReserve;
+        }
+        for(int i = 0; i < n; i++) {
+            boutons.add(new Bouton(String.valueOf(i)));
         }
 
         String choix = choisir(
@@ -200,70 +207,44 @@ public class Joueur {
                 boutons,
                 false);
 
-        //log(String.format("%s n'aime aucune ville " + choix, toLog()));
-        if(choix.equals(0)) {
-            ArrayList<String> nbPionsWagonsEchanger = new ArrayList<>();
-            if (nbPionsWagonEnReserve < nbPionsBateau) {
-                for (int i = 1; i <= nbPionsWagonEnReserve; i++) {
-                    nbPionsWagonsEchanger.add(String.valueOf(i));
-                }
-            } else {
-                for (int i = 1; i <= nbPionsBateau; i++) {
-                    nbPionsWagonsEchanger.add(String.valueOf(i));
-                }
-            }
-            List<Bouton> bouton = new ArrayList<>();
-            for (String p : nbPionsWagonsEchanger) {
-                boutons.add(new Bouton(p));
-            }
+        nbPionsWagon += Integer.parseInt(choix);
+        nbPionsBateauEnReserve += Integer.parseInt(choix);
+        nbPionsWagonEnReserve -= Integer.parseInt(choix);
+        nbPionsBateau -= Integer.parseInt(choix);
+        score -= Integer.parseInt(choix);
+    }
 
-            String choixPions = choisir(
-                    "Combien de pions voulez vous échanger ?",
-                    null,
-                    bouton,
-                    false);
-
-            for (String p : nbPionsWagonsEchanger) {
-                if (p.equals(choixPions)) {
-                    int n = Integer.parseInt(choixPions);
-                    nbPionsWagon += n;
-                    nbPionsBateau -= n;
-                    nbPionsWagonEnReserve -= n;
-                    nbPionsBateauEnReserve += n;
-                }
-            }
+    public void EchangerPionsBateaux() {
+        List<Bouton> boutons = new ArrayList<>();
+        int n;
+        if(nbPionsBateauEnReserve > nbPionsWagon) {
+            n = nbPionsWagon;
         } else {
-            ArrayList<String> nbPionsBateauxEchanger = new ArrayList<>();
-            if (nbPionsBateauEnReserve < nbPionsWagon) {
-                for (int i = 1; i <= nbPionsWagonEnReserve; i++) {
-                    nbPionsBateauxEchanger.add(String.valueOf(i));
-                }
-            } else {
-                for (int i = 1; i <= nbPionsWagon; i++) {
-                    nbPionsBateauxEchanger.add(String.valueOf(i));
-                }
-            }
-            List<Bouton> bouton = new ArrayList<>();
-            for (String p : nbPionsBateauxEchanger) {
-                boutons.add(new Bouton(p));
-            }
+            n = nbPionsBateauEnReserve;
+        }
+        for(int i = 0; i < n; i++) {
+            boutons.add(new Bouton(String.valueOf(i)));
+        }
 
-            String choixPionsBateau = choisir(
-                    "Combien de pions voulez vous échanger ?",
-                    null,
-                    bouton,
-                    false);
+        String choix = choisir(
+                "Quel pions voulez vous échanger",
+                null,
+                boutons,
+                false);
 
-            for (String p : nbPionsBateauxEchanger) {
-                if (p.equals(choixPionsBateau)) {
-                    int n = Integer.parseInt(choixPionsBateau);
-                    nbPionsWagon -= n;
-                    nbPionsBateau += n;
-                    nbPionsWagonEnReserve += n;
-                    nbPionsBateauEnReserve -= n;
-                }
-            }
-        }*/
+        nbPionsWagon -= Integer.parseInt(choix);
+        nbPionsBateauEnReserve -= Integer.parseInt(choix);
+        nbPionsWagonEnReserve += Integer.parseInt(choix);
+        nbPionsBateau += Integer.parseInt(choix);
+        score -= Integer.parseInt(choix);
+    }
+
+    public void EchangerPions(String pion) {
+        if(Objects.equals(pion, "PIONS WAGON")) {
+            EchangerPionsWagons();
+        } else {
+            EchangerPionsBateaux();
+        }
     }
 
     public void PrendreNvDestinations() {
@@ -349,27 +330,32 @@ public class Joueur {
      *  - capturer une route
      *  - construire un port.
      */
-    void jouerTour() {
-        List<Bouton> boutons = Arrays.asList(
-                new Bouton("piocher des cartes transport"),
-                new Bouton("échanger des pions wagons ou bateau"),
-                new Bouton("DESTINATION"),
-                new Bouton("capturer une route"),
-                new Bouton("construire un port"));
+    public void jouerTour() {
+        ArrayList<String> pions = new ArrayList<>();
+        pions.add("PIONS WAGON");
+        pions.add("PIONS BATEAU");
+        ArrayList<String> destination = new ArrayList<>();
+        for(int i = 0; i < jeu.getPileDestinations().size(); i++) {
+            destination.add("DESTINATION");
+        }
 
+        ArrayList<String> All = new ArrayList<>();
+        All.addAll(pions);
+        All.addAll(destination);
 
+        ArrayList<Bouton> boutons = new ArrayList<>();
+        for (String s : All) {
+            boutons.add(new Bouton(s));
+        }
         String choix = choisir(
                 "Quelle action souhaitez-vous faire ?",
                 null,
                 boutons,
                 true);
 
-        if (choix.equals("")) {
-            log(String.format("%s n'aime aucune ville", toLog()));
-        } else {
-            log(String.format("%s a choisi %s", toLog(), choix));
-        }
-        if(choix.equals("DESTINATION")) {
+        if(pions.contains(choix)) {
+            EchangerPions(choix);
+        } if(destination.contains(choix)) {
             PrendreNvDestinations();
         }
     }

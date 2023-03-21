@@ -133,9 +133,11 @@ public class Jeu implements Runnable {
     public List<CarteTransport> getCartesTransportVisibles() {
         return new ArrayList<>(cartesTransportVisibles);
     }
+
     public void InitialisationCarte() {
         int n = 0;
         do {
+            n = 0;
             for (int i = 0; i < 3; i++) {
                 cartesTransportVisibles.add(piocherCarteBateau());
                 cartesTransportVisibles.add(piocherCarteWagon());
@@ -245,6 +247,7 @@ public class Jeu implements Runnable {
             InitialisationPions();
         }
         for (Joueur j : joueurs) {
+            joueurCourant = j;
             j.jouerTour();
         }
         // Fin de la partie
