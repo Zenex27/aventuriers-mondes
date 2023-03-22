@@ -241,8 +241,11 @@ public class Joueur {
 
     public void EchangerPions(String pion) {
         if(Objects.equals(pion, "PIONS WAGON")) {
+
             EchangerPionsWagons();
-        } else {
+        }
+        else {
+
             EchangerPionsBateaux();
         }
     }
