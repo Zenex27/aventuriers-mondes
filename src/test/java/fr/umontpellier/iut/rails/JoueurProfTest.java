@@ -366,7 +366,7 @@ public class JoueurProfTest {
         assertTrue(cartesTransportVisibles.contains(cBateau0));
     }
 
-    /*@Test
+    @Test
     void testCaptureRouteTerrestre() {
         cartesJoueur1.clear();
         CarteTransport c1 = new CarteTransport(TypeCarteTransport.WAGON, Couleur.ROUGE, false, false); // C141
@@ -856,5 +856,5 @@ public class JoueurProfTest {
         assertEquals(1, routesJoueur1.size());
         assertEquals("R59", routesJoueur1.get(0).getNom());
         assertEquals(2, TestUtils.getScore(joueur1));
-    }*/
+    }
 }

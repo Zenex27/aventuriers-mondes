@@ -12,4 +12,10 @@ public record Ville(
     public String toLog() {
         return String.format("<span class=\"ville\">%s</span>", nom);
     }
+
+
+    public String getNom() {
+        return nom;
+    }
 }
+

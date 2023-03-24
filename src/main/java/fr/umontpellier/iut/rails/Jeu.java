@@ -114,6 +114,14 @@ public class Jeu implements Runnable {
         this.joueurCourant = joueurs.get(0);
     }
 
+    public PilesCartesTransport getPilesDeCartesWagon() {
+        return pilesDeCartesWagon;
+    }
+
+    public PilesCartesTransport getPilesDeCartesBateau() {
+        return pilesDeCartesBateau;
+    }
+
     public List<Destination> getPileDestinations() {
         return pileDestinations;
     }
@@ -132,6 +140,22 @@ public class Jeu implements Runnable {
 
     public List<CarteTransport> getCartesTransportVisibles() {
         return new ArrayList<>(cartesTransportVisibles);
+    }
+
+    public void ModifierCarteTransport(CarteTransport carte) {
+        cartesTransportVisibles.remove(carte);
+    }
+
+    public void DefausserDansBateau(CarteTransport carte) {
+        pilesDeCartesBateau.defausser(carte);
+    }
+
+    public void DefausserDansWagon(CarteTransport carte) {
+        pilesDeCartesWagon.defausser(carte);
+    }
+
+    public void AddCarteTransport(CarteTransport carte) {
+        cartesTransportVisibles.add(carte);
     }
 
     public void InitialisationCarte() {
@@ -157,51 +181,55 @@ public class Jeu implements Runnable {
     }
 
     public void InitialisationCarteJoueur() {
-            for (int i = 0; i < 3; i++) {
-                joueurCourant.getCartesTransport().add(pilesDeCartesWagon.piocher());
-            }
-            for (int i = 0; i < 7; i++) {
-                joueurCourant.getCartesTransport().add(pilesDeCartesBateau.piocher());
-            }
+        for (int i = 0; i < 3; i++) {
+            joueurCourant.getCartesTransport().add(pilesDeCartesWagon.piocher());
+        }
+        for (int i = 0; i < 7; i++) {
+            joueurCourant.getCartesTransport().add(pilesDeCartesBateau.piocher());
+        }
     }
 
     public void Initialisationdestination() {
-            List<Destination> dest = new ArrayList<>();
-            for (int x = 0; x < 5; x++) {
-                dest.add(pileDestinations.get(0));
-                joueurCourant.setDestinations(dest.get(x));
-                pileDestinations.remove(0);
+        List<Destination> dest = new ArrayList<>();
+        for (int x = 0; x < 5; x++) {
+            dest.add(pileDestinations.get(0));
+            joueurCourant.setDestinations(dest.get(x));
+            pileDestinations.remove(0);
+        }
+        while(dest.size() > 3) {
+            List<Bouton> boutons = new ArrayList<>();
+            for (Destination d : dest) {
+                boutons.add(new Bouton(d.toString(), d.getNom()));
             }
-            while(dest.size() > 3) {
-                List<Bouton> boutons = new ArrayList<>();
-                for (Destination d : dest) {
-                    boutons.add(new Bouton(d.toString(), d.getNom()));
-                }
-                String choix = joueurCourant.choisir(
-                        "Choisissez de supprimer jusqu'a 2 destinations ou passer",
-                        null,
-                        boutons,
-                        true);
+            String choix = joueurCourant.choisir(
+                    "Choisissez de supprimer jusqu'a 2 destinations ou passer",
+                    null,
+                    boutons,
+                    true);
 
-                if (choix.equals("")) {
-                    log(String.format("%s a choisi de passer", joueurCourant.toLog()));
+            if (choix.equals("")) {
+                log(String.format("%s a choisi de passer", joueurCourant.toLog()));
+                break;
+            }
+            for (Destination d : dest) {
+                if (d.getNom().equals(choix)) {
+                    log(String.format("%s a choisi de supprimer " + d, joueurCourant.toLog()));
+                    joueurCourant.removeDestinations(d);
+                    dest.remove(d);
+                    pileDestinations.add(pileDestinations.size() - 1, d);
                     break;
-                }
-                for (Destination d : dest) {
-                    if (d.getNom().equals(choix)) {
-                        log(String.format("%s a choisi de supprimer " + d, joueurCourant.toLog()));
-                        joueurCourant.removeDestinations(d);
-                        dest.remove(d);
-                        pileDestinations.add(pileDestinations.size() - 1, d);
-                        break;
-                    }
                 }
             }
         }
-
+    }
     public void InitialisationPions() {
         ArrayList<String> nbPionsWagon = new ArrayList<>();
-
+       /* ArrayList<String> nbPionsPorts = new ArrayList<>();
+       int a = 0;
+        for(int i =0;i<3;i++){
+            a = a + 1;
+        }
+    nbPionsPorts.add(String.valueOf(a));*/
         for (int i = 10; i <= 25; i++) {
             nbPionsWagon.add(String.valueOf(i));
         }
@@ -209,24 +237,39 @@ public class Jeu implements Runnable {
         for (String p : nbPionsWagon) {
             boutons.add(new Bouton(p));
         }
-            String choix = joueurCourant.choisir(
-                    "Choisissez le nombre de pions Wagon que vous voulez",
-                    null,
-                    boutons,
-                    false);
+      /*  List<Bouton> boutonsP = new ArrayList<>();
+        for (String d : nbPionsPorts) {
+            boutons.add(new Bouton(d));
+        }*/
+        String choix = joueurCourant.choisir(
+                "Choisissez le nombre de pions Wagon que vous voulez",
+                null,
+                boutons,
+                false);
 
-            log(String.format("%s a choisi de prendre " + choix + " pions wagons", joueurCourant.toLog()));
+        log(String.format("%s a choisi de prendre " + choix + " pions wagons", joueurCourant.toLog()));
 
-            for (String p : nbPionsWagon) {
-                if (p.equals(choix)) {
-                    int n = Integer.parseInt(choix);
-                    joueurCourant.setNbPionsWagon(n);
-                    joueurCourant.setNbPionsWagonEnReserve(25 - n);
-                    joueurCourant.setNbPionsBateau(60 - n);
-                    joueurCourant.setNbPionsBateauEnReserve(50 - (60 - n));
-                }
+        for (String p : nbPionsWagon) {
+            if (p.equals(choix)) {
+                int n = Integer.parseInt(choix);
+                joueurCourant.setNbPionsWagon(n);
+                joueurCourant.setNbPionsWagonEnReserve(25 - n);
+                joueurCourant.setNbPionsBateau(60 - n);
+                joueurCourant.setNbPionsBateauEnReserve(50 - (60 - n));
             }
         }
+       /* for(String d : nbPionsPorts) {
+            joueurCourant.setNbPionsBateau(3);
+
+            }*/
+    }
+
+
+
+
+
+
+
 
     /**
      * Exécute la partie
@@ -245,6 +288,7 @@ public class Jeu implements Runnable {
             InitialisationCarteJoueur();
             Initialisationdestination();
             InitialisationPions();
+
         }
         for (Joueur j : joueurs) {
             joueurCourant = j;
